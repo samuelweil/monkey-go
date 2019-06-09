@@ -1,21 +1,44 @@
 package token
 
 const (
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	ASTERISK = "*"
+	SLASH    = "/"
+	BANG     = "!"
 )
-
-func Plus() Token {
-	return FromStr(PLUS)
-}
 
 func Assign() Token {
 	return FromStr(ASSIGN)
 }
+func Plus() Token {
+	return FromStr(PLUS)
+}
+
+func Minus() Token {
+	return FromStr(MINUS)
+}
+
+func Asterisk() Token {
+	return FromStr(ASTERISK)
+}
+
+func Slash() Token {
+	return FromStr(SLASH)
+}
+
+func Bang() Token {
+	return FromStr(BANG)
+}
 
 var operators = map[string]Token{
-	PLUS:   Plus(),
-	ASSIGN: Assign(),
+	ASSIGN:   Assign(),
+	PLUS:     Plus(),
+	MINUS:    Minus(),
+	ASTERISK: Asterisk(),
+	SLASH:    Slash(),
+	BANG:     Bang(),
 }
 
 func Operator(c byte) Token {

@@ -22,11 +22,15 @@ func validateLexer(t *testing.T, inp string, exp []token.Token) {
 }
 
 func TestOperators(t *testing.T) {
-	input := `=+`
+	input := `=+-*/!`
 
 	tests := []token.Token{
 		token.Assign(),
 		token.Plus(),
+		token.Minus(),
+		token.Asterisk(),
+		token.Slash(),
+		token.Bang(),
 	}
 
 	validateLexer(t, input, tests)

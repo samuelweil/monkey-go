@@ -26,10 +26,6 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
-func fromChar(c byte) token.Token {
-	return token.FromStr(string(c))
-}
-
 func (l *Lexer) NextToken() (tok token.Token) {
 	l.skipWhiteSpace()
 
