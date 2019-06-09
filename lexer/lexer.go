@@ -33,13 +33,65 @@ func fromChar(c byte) token.Token {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
+	l.skipWhiteSpace()
+
 	switch l.ch {
 	case '=', '+', ',', ';', '(', ')', '{', '}', '[', ']':
 		tok = fromChar(l.ch)
 	case 0:
 		tok = token.Token{Type: token.EOF}
+	default:
+		switch {
+
+		case isValidIdentChar(l.ch):
+			literal := l.readIdentifier()
+
+			if keywordToken, ok := token.KeyWords[literal]; ok {
+				tok = keywordToken
+			} else {
+				tok = token.Ident(literal)
+			}
+			return tok
+
+		case isDigit(l.ch):
+			return l.readNumber()
+
+		default:
+			tok = token.Illegal()
+		}
 	}
 
 	l.readChar()
 	return tok
+}
+
+func (l *Lexer) readIdentifier() string {
+	start := l.position
+
+	for isValidIdentChar(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[start:l.position]
+}
+
+func (l *Lexer) readNumber() token.Token {
+
+	start := l.position
+
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+
+	return token.Int(l.input[start:l.position])
+}
+
+func (l *Lexer) skipWhiteSpace() {
+	for isWhiteSpace(l.ch) {
+		l.readChar()
+	}
+}
+
+func isValidIdentChar(c byte) bool {
+	return isLetter(c) || (c == '_')
 }
