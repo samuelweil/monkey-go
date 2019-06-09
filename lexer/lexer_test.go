@@ -38,6 +38,21 @@ func TestOperators(t *testing.T) {
 	validateLexer(t, input, tests)
 }
 
+func TestMultiCharOperators(t *testing.T) {
+	input := `== != <= >= && ||`
+
+	tests := []token.Token{
+		token.Eq(),
+		token.NotEq(),
+		token.LessEq(),
+		token.GreatEq(),
+		token.And(),
+		token.Or(),
+	}
+
+	validateLexer(t, input, tests)
+}
+
 func TestDelimiters(t *testing.T) {
 	input := `(){}[],;`
 
@@ -66,7 +81,7 @@ func TestLexer(t *testing.T) {
 
 	let result = add(five, ten);
 
-	if 5 < 10 {
+	if 5 != 10 {
 		ret true;
 	} else {
 		ret false;
@@ -86,7 +101,7 @@ func TestLexer(t *testing.T) {
 		token.RBrace(), token.SemiColon(),
 		token.Let(), token.Ident("result"), token.Assign(), token.Ident("add"), token.LParen(),
 		token.Ident("five"), token.Comma(), token.Ident("ten"), token.RParen(), token.SemiColon(),
-		token.If(), token.Int("5"), token.LessThan(), token.Int("10"), token.LBrace(),
+		token.If(), token.Int("5"), token.NotEq(), token.Int("10"), token.LBrace(),
 		token.Return(), token.True(), token.SemiColon(),
 		token.RBrace(), token.Else(), token.LBrace(),
 		token.Return(), token.False(), token.SemiColon(),

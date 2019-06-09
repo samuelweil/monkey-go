@@ -7,9 +7,18 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	BANG     = "!"
+	AMP      = "&"
+	PIPE     = "|"
 
+	EQ = "=="
+	NE = "!="
+	LE = "<="
+	GE = ">="
 	LT = "<"
 	GT = ">"
+
+	AND = "&&"
+	OR  = "||"
 )
 
 var operators = map[string]Token{
@@ -19,8 +28,16 @@ var operators = map[string]Token{
 	ASTERISK: Asterisk(),
 	SLASH:    Slash(),
 	BANG:     Bang(),
+	EQ:       Eq(),
+	NE:       NotEq(),
+	LE:       LessEq(),
+	GE:       GreatEq(),
 	LT:       LessThan(),
 	GT:       GreaterThan(),
+	AND:      And(),
+	OR:       Or(),
+	AMP:      Ampersand(),
+	PIPE:     Pipe(),
 }
 
 func Assign() Token {
@@ -46,12 +63,44 @@ func Bang() Token {
 	return FromStr(BANG)
 }
 
+func Eq() Token {
+	return FromStr(EQ)
+}
+
+func NotEq() Token {
+	return FromStr(NE)
+}
+
+func LessEq() Token {
+	return FromStr(LE)
+}
+
+func GreatEq() Token {
+	return FromStr(GE)
+}
+
 func LessThan() Token {
 	return FromStr(LT)
 }
 
 func GreaterThan() Token {
 	return FromStr(GT)
+}
+
+func And() Token {
+	return FromStr(AND)
+}
+
+func Or() Token {
+	return FromStr(OR)
+}
+
+func Ampersand() Token {
+	return FromStr(AMP)
+}
+
+func Pipe() Token {
+	return FromStr(PIPE)
 }
 
 func Operator(c byte) Token {
@@ -61,4 +110,13 @@ func Operator(c byte) Token {
 func IsOperator(c byte) bool {
 	_, b := operators[string(c)]
 	return b
+}
+
+func IsMultiCharOperator(s string) bool {
+	_, b := operators[s]
+	return b
+}
+
+func MultiCharOperator(s string) Token {
+	return operators[s]
 }

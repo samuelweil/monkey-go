@@ -23,7 +23,15 @@ func (l *Lexer) readChar() {
 	}
 
 	l.position = l.readPosition
-	l.readPosition += 1
+	l.readPosition++
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	}
+
+	return l.input[l.readPosition]
 }
 
 func (l *Lexer) NextToken() (tok token.Token) {
@@ -50,6 +58,13 @@ func (l *Lexer) NextToken() (tok token.Token) {
 
 	case token.IsOperator(l.ch):
 		tok = token.Operator(l.ch)
+
+		// Check for a 2-char operator
+		op := string(l.ch) + string(l.peekChar())
+		if token.IsMultiCharOperator(op) {
+			tok = token.MultiCharOperator(op)
+			l.readChar()
+		}
 
 	case token.IsDelimiter(l.ch):
 		tok = token.Delimiter(l.ch)
