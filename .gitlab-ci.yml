@@ -1,6 +1,10 @@
 stages:
 - test
 
+before_script:
+- cp -r ./ $GOPATH/src/${CI_PROJECT_NAME}
+- cd $GOPATH/src/${CI_PROJECT_NAME}
+
 test:
   image: golang
   stage: test
