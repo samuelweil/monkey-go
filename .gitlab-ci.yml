@@ -1,0 +1,9 @@
+stages:
+- test
+
+test:
+  image: golang
+  stage: test
+  script:
+  - go get -u github.com/jstemmer/go-junit-report
+  - go test -v 2>&1 | go-junit-report > junit.xml
