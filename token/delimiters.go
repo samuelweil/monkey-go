@@ -12,6 +12,26 @@ const (
 	RBRACK = "]"
 )
 
+var delimiters = map[string]Token{
+	COMMA:     Comma(),
+	SEMICOLON: SemiColon(),
+	LPAREN:    LParen(),
+	RPAREN:    RParen(),
+	LBRACE:    LBrace(),
+	RBRACE:    RBrace(),
+	LBRACK:    LBrack(),
+	RBRACK:    RBrack(),
+}
+
+func IsDelimiter(c byte) bool {
+	_, b := delimiters[string(c)]
+	return b
+}
+
+func Delimiter(c byte) Token {
+	return delimiters[string(c)]
+}
+
 func SemiColon() Token {
 	return FromStr(SEMICOLON)
 }

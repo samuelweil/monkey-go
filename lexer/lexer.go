@@ -30,35 +30,36 @@ func fromChar(c byte) token.Token {
 	return token.FromStr(string(c))
 }
 
-func (l *Lexer) NextToken() token.Token {
-	var tok token.Token
-
+func (l *Lexer) NextToken() (tok token.Token) {
 	l.skipWhiteSpace()
 
-	switch l.ch {
-	case '=', '+', ',', ';', '(', ')', '{', '}', '[', ']':
-		tok = fromChar(l.ch)
-	case 0:
-		tok = token.Token{Type: token.EOF}
-	default:
-		switch {
+	switch {
+	case l.ch == 0:
+		tok = token.Eof()
 
-		case isValidIdentChar(l.ch):
-			literal := l.readIdentifier()
+	case isDigit(l.ch):
+		tok = l.readNumber()
+		return
 
-			if keywordToken, ok := token.KeyWords[literal]; ok {
-				tok = keywordToken
-			} else {
-				tok = token.Ident(literal)
-			}
-			return tok
+	case isValidIdentChar(l.ch):
+		literal := l.readIdentifier()
 
-		case isDigit(l.ch):
-			return l.readNumber()
-
-		default:
-			tok = token.Illegal()
+		if kw, ok := token.KeyWords[literal]; ok {
+			tok = kw
+		} else {
+			tok = token.Ident(literal)
 		}
+
+		return
+
+	case token.IsOperator(l.ch):
+		tok = token.Operator(l.ch)
+
+	case token.IsDelimiter(l.ch):
+		tok = token.Delimiter(l.ch)
+
+	default:
+		tok = token.Illegal()
 	}
 
 	l.readChar()
