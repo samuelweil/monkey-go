@@ -7,7 +7,21 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	BANG     = "!"
+
+	LT = "<"
+	GT = ">"
 )
+
+var operators = map[string]Token{
+	ASSIGN:   Assign(),
+	PLUS:     Plus(),
+	MINUS:    Minus(),
+	ASTERISK: Asterisk(),
+	SLASH:    Slash(),
+	BANG:     Bang(),
+	LT:       LessThan(),
+	GT:       GreaterThan(),
+}
 
 func Assign() Token {
 	return FromStr(ASSIGN)
@@ -32,13 +46,12 @@ func Bang() Token {
 	return FromStr(BANG)
 }
 
-var operators = map[string]Token{
-	ASSIGN:   Assign(),
-	PLUS:     Plus(),
-	MINUS:    Minus(),
-	ASTERISK: Asterisk(),
-	SLASH:    Slash(),
-	BANG:     Bang(),
+func LessThan() Token {
+	return FromStr(LT)
+}
+
+func GreaterThan() Token {
+	return FromStr(GT)
 }
 
 func Operator(c byte) Token {

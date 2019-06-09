@@ -22,7 +22,7 @@ func validateLexer(t *testing.T, inp string, exp []token.Token) {
 }
 
 func TestOperators(t *testing.T) {
-	input := `=+-*/!`
+	input := `=+-*/!<>`
 
 	tests := []token.Token{
 		token.Assign(),
@@ -31,6 +31,8 @@ func TestOperators(t *testing.T) {
 		token.Asterisk(),
 		token.Slash(),
 		token.Bang(),
+		token.LessThan(),
+		token.GreaterThan(),
 	}
 
 	validateLexer(t, input, tests)
