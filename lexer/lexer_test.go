@@ -11,12 +11,31 @@ func assertEq(t *testing.T, exp, got interface{}) {
 	}
 }
 
-func TestOneCharTokens(t *testing.T) {
-	input := `=+(){}[],;`
+func validateLexer(t *testing.T, inp string, exp []token.Token) {
+	lexer := New(inp)
+
+	for _, tt := range exp {
+		tok := lexer.NextToken()
+
+		assertEq(t, tt, tok)
+	}
+}
+
+func TestOperators(t *testing.T) {
+	input := `=+`
 
 	tests := []token.Token{
 		token.Assign(),
 		token.Plus(),
+	}
+
+	validateLexer(t, input, tests)
+}
+
+func TestDelimiters(t *testing.T) {
+	input := `(){}[],;`
+
+	tests := []token.Token{
 		token.LParen(),
 		token.RParen(),
 		token.LBrace(),
@@ -27,13 +46,7 @@ func TestOneCharTokens(t *testing.T) {
 		token.SemiColon(),
 	}
 
-	lexer := New(input)
-
-	for _, tt := range tests {
-		tok := lexer.NextToken()
-
-		assertEq(t, tt, tok)
-	}
+	validateLexer(t, input, tests)
 }
 
 func TestLexer(t *testing.T) {
@@ -59,12 +72,5 @@ func TestLexer(t *testing.T) {
 		token.Eof(),
 	}
 
-	lexer := New(input)
-
-	for _, tt := range tests {
-		tok := lexer.NextToken()
-
-		assertEq(t, tt, tok)
-	}
-
+	validateLexer(t, input, tests)
 }
