@@ -11,12 +11,6 @@ func FromStr(s string) Token {
 	return Token{Type(s), s}
 }
 
-func Let() Token {
-	return Token{
-		Type: LET,
-	}
-}
-
 func Ident(id string) Token {
 	return Token{
 		Type:    IDENT,
