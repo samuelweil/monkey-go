@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	_ "monkey-go/lexer"
+	"monkey-go/repl"
+	"os"
 )
 
 func main() {
-	fmt.Println("Hello World")
-}
-
-func hello() string {
-	return "Hello World"
+	fmt.Println("Welcome to Monkey")
+	repl.Start(os.Stdin, os.Stdout)
 }
