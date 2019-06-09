@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	_ "monkey-go/lexer"
+)
 
 func main() {
 	fmt.Println("Hello World")
