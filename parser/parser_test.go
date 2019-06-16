@@ -101,3 +101,25 @@ func TestReturnStatements(t *testing.T) {
 		check.Eq(retStmt.TokenLiteral(), "ret")
 	}
 }
+
+func TestIdentifierExpression(t *testing.T) {
+	assert := assert.New(t)
+	check := check.New(t)
+
+	input := "foobar;"
+
+	p := New(input)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	assert.Eq(len(program.Statements), 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	assert.True(ok, "%s is not an *ast.ExpressionStatement", stmt)
+
+	ident, ok := stmt.Expression.(*ast.Identifier)
+	assert.True(ok, "%s is not an *ast.Identifier", ident)
+
+	check.Eq(ident.Value, "foobar")
+	check.Eq(ident.TokenLiteral(), "foobar")
+}
