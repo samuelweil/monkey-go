@@ -1,12 +1,16 @@
 package parser
 
 import (
-	"monkey-go/assert"
 	"monkey-go/ast"
+	"monkey-go/testing/assert"
+	"monkey-go/testing/check"
 	"testing"
 )
 
 func TestLetStatement(t *testing.T) {
+
+	assert := assert.New(t)
+
 	input := `
 	let x = 5;
 	let y = 10;
@@ -17,13 +21,7 @@ func TestLetStatement(t *testing.T) {
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
 
-	if program == nil {
-		t.Fatalf("ParseProgram() returned nil")
-	}
-
-	if n := len(program.Statements); n != 3 {
-		t.Fatalf("program has %d statements; expected 3", n)
-	}
+	assert.Eq(len(program.Statements), 3)
 
 	tests := []struct {
 		expectedIdentifier string
@@ -44,7 +42,7 @@ func TestLetStatement(t *testing.T) {
 }
 
 func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
-	assert := assert.New(t)
+	check := check.New(t)
 
 	stmt, ok := s.(*ast.LetStatement)
 	if !ok {
@@ -52,11 +50,11 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 		return false
 	}
 
-	if !assert.Eq(stmt.Name.Value, name) {
+	if !check.Eq(stmt.Name.Value, name) {
 		return false
 	}
 
-	if !assert.Eq(stmt.Name.TokenLiteral(), name) {
+	if !check.Eq(stmt.Name.TokenLiteral(), name) {
 		return false
 	}
 

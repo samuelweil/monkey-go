@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"monkey-go/assert"
+	"monkey-go/testing/assert"
 	"monkey-go/token"
 	"testing"
 )
