@@ -126,7 +126,6 @@ func TestIdentifierExpression(t *testing.T) {
 
 func TestIntegerLiteralExpression(t *testing.T) {
 	assert := assert.New(t)
-	check := check.New(t)
 
 	input := "5;"
 
@@ -139,8 +138,52 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	assert.True(ok, "%s is not a *ast.ExpressionStatement", program.Statements[0])
 
-	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
-	assert.True(ok, "%s is not a *ast.IntegerLiteral", stmt.Expression)
+	testIntegerLiteral(t, stmt.Expression, 5)
+}
 
-	check.Eq(literal.Value, 5)
+func testIntegerLiteral(t *testing.T, il ast.Expression, value int) bool {
+	check := check.New(t)
+
+	literal, ok := il.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("%s is not a *ast.IntegerLiteral", il)
+		return false
+	}
+
+	if !check.Eq(literal.Value, value) {
+		return false
+	}
+
+	return true
+}
+
+func TestParsingPrefixExpressions(t *testing.T) {
+	assert := assert.New(t)
+
+	prefixTests := []struct {
+		input        string
+		operator     string
+		integerValue int
+	}{
+		{"!5;", "!", 5},
+		{"-15;", "-", 15},
+	}
+
+	for _, tt := range prefixTests {
+		p := New(tt.input)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		assert.Eq(len(program.Statements), 1)
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		assert.True(ok, "%s is not an *ast.ExpressionStatement", program.Statements[0])
+
+		exp, ok := stmt.Expression.(*ast.PrefixExpression)
+		assert.True(ok, "%s is not an *ast.PrefixExpression", stmt.Expression)
+
+		assert.Eq(exp.Operator, tt.operator)
+
+		testIntegerLiteral(t, exp.Right, tt.integerValue)
+	}
 }
