@@ -1,23 +1,21 @@
 package lexer
 
 import (
+	"monkey-go/assert"
 	"monkey-go/token"
 	"testing"
 )
 
-func assertEq(t *testing.T, exp, got interface{}) {
-	if exp != got {
-		t.Errorf("Expected %v, got %v", exp, got)
-	}
-}
-
 func validateLexer(t *testing.T, inp string, exp []token.Token) {
+
+	assert := assert.New(t)
+
 	lexer := New(inp)
 
 	for _, tt := range exp {
 		tok := lexer.NextToken()
 
-		assertEq(t, tt, tok)
+		assert.Eq(tt, tok)
 	}
 }
 
