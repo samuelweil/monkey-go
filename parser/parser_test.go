@@ -115,11 +115,32 @@ func TestIdentifierExpression(t *testing.T) {
 	assert.Eq(len(program.Statements), 1)
 
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
-	assert.True(ok, "%s is not an *ast.ExpressionStatement", stmt)
+	assert.True(ok, "%s is not an *ast.ExpressionStatement", program.Statements[0])
 
 	ident, ok := stmt.Expression.(*ast.Identifier)
-	assert.True(ok, "%s is not an *ast.Identifier", ident)
+	assert.True(ok, "%s is not an *ast.Identifier", stmt.Expression)
 
 	check.Eq(ident.Value, "foobar")
 	check.Eq(ident.TokenLiteral(), "foobar")
+}
+
+func TestIntegerLiteralExpression(t *testing.T) {
+	assert := assert.New(t)
+	check := check.New(t)
+
+	input := "5;"
+
+	p := New(input)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	assert.Eq(len(program.Statements), 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	assert.True(ok, "%s is not a *ast.ExpressionStatement", program.Statements[0])
+
+	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
+	assert.True(ok, "%s is not a *ast.IntegerLiteral", stmt.Expression)
+
+	check.Eq(literal.Value, 5)
 }

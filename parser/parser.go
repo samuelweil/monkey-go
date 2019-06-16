@@ -5,6 +5,7 @@ import (
 	"monkey-go/ast"
 	"monkey-go/lexer"
 	"monkey-go/token"
+	"strconv"
 )
 
 type (
@@ -34,6 +35,7 @@ func New(s string) *Parser {
 	p.infixParsers = make(map[token.Type]infixParseFn)
 
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 	p.nextToken()
 	p.nextToken()
 
@@ -162,4 +164,18 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	}
 
 	return prefix()
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.currentToken}
+
+	value, err := strconv.Atoi(p.currentToken.Literal)
+	if err != nil {
+		msg := fmt.Sprintf("Could not parse %q as integer", p.currentToken.Literal)
+		p.errors = append(p.errors, msg)
+	}
+
+	lit.Value = value
+	return lit
+
 }
