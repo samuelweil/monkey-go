@@ -3,7 +3,6 @@ package parser
 import (
 	"monkey-go/assert"
 	"monkey-go/ast"
-	"monkey-go/lexer"
 	"testing"
 )
 
@@ -13,9 +12,7 @@ func TestLetStatement(t *testing.T) {
 	let y = 10;
 	let foobar = 838383;
 	`
-
-	l := lexer.New(input)
-	p := New(l)
+	p := New(input)
 
 	program := p.ParseProgram()
 	checkParserErrors(t, p)

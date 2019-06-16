@@ -16,9 +16,9 @@ type Parser struct {
 	errors []string
 }
 
-func New(l *lexer.Lexer) *Parser {
+func New(s string) *Parser {
 	p := &Parser{
-		l:      l,
+		l:      lexer.New(s),
 		errors: []string{},
 	}
 
