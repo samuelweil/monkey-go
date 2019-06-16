@@ -2,9 +2,9 @@ package parser
 
 import (
 	"monkey-go/ast"
-	"monkey-go/testing/assert"
-	"monkey-go/testing/check"
 	"testing"
+	"tools/testing/assert"
+	"tools/testing/check"
 )
 
 func TestLetStatement(t *testing.T) {
@@ -73,4 +73,31 @@ func checkParserErrors(t *testing.T, p *Parser) {
 		t.Errorf("parser error: %q", msg)
 	}
 	t.FailNow()
+}
+
+func TestReturnStatements(t *testing.T) {
+	assert := assert.New(t)
+	check := check.New(t)
+
+	input := `
+	ret 5;
+	ret 10;
+	ret 993322;
+	`
+	p := New(input)
+
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	assert.Eq(len(program.Statements), 3)
+
+	for _, stmt := range program.Statements {
+		retStmt, ok := stmt.(*ast.ReturnStatement)
+		if !ok {
+			t.Errorf("stmt not *ast.ReturnStatement, got=%T", stmt)
+			continue
+		}
+
+		check.Eq(retStmt.TokenLiteral(), "ret")
+	}
 }

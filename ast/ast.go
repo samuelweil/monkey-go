@@ -32,7 +32,7 @@ type LetStatement struct {
 }
 
 func (ls *LetStatement) TokenLiteral() string {
-	return ls.Token.Literal
+	return "let"
 }
 
 type Identifier struct {
@@ -50,5 +50,5 @@ type ReturnStatement struct {
 }
 
 func (rs *ReturnStatement) TokenLiteral() string {
-	return rs.Token.Literal
+	return "ret"
 }
