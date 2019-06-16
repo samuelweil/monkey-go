@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"monkey-go/ast"
 	"monkey-go/lexer"
 	"monkey-go/token"
@@ -11,10 +12,15 @@ type Parser struct {
 
 	currentToken token.Token
 	peekToken    token.Token
+
+	errors []string
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{
+		l:      l,
+		errors: []string{},
+	}
 
 	p.nextToken()
 	p.nextToken()
@@ -77,6 +83,7 @@ func (p *Parser) expectPeek(typ token.Type) bool {
 		return true
 	}
 
+	p.peekError(typ)
 	return false
 }
 
@@ -86,4 +93,13 @@ func (p *Parser) peekTokenIs(typ token.Type) bool {
 
 func (p *Parser) currentTokenIs(typ token.Type) bool {
 	return p.currentToken.Type == typ
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.Type) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
