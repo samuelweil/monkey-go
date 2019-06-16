@@ -1,9 +1,9 @@
 package lexer
 
 import (
-	"monkey-go/testing/assert"
 	"monkey-go/token"
 	"testing"
+	"tools/testing/assert"
 )
 
 func validateLexer(t *testing.T, inp string, exp []token.Token) {
