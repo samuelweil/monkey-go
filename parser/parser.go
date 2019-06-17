@@ -39,6 +39,15 @@ func New(s string) *Parser {
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 
+	p.registerInfix(token.PLUS, p.parseInfixExpression)
+	p.registerInfix(token.MINUS, p.parseInfixExpression)
+	p.registerInfix(token.SLASH, p.parseInfixExpression)
+	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.EQ, p.parseInfixExpression)
+	p.registerInfix(token.NE, p.parseInfixExpression)
+	p.registerInfix(token.LT, p.parseInfixExpression)
+	p.registerInfix(token.GT, p.parseInfixExpression)
+
 	p.nextToken()
 	p.nextToken()
 
@@ -163,12 +172,26 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	typ := p.currentToken.Type
 	prefix := p.prefixParsers[typ]
+
 	if prefix == nil {
 		p.noPrefixParseFnError(typ)
 		return nil
 	}
 
-	return prefix()
+	leftExp := prefix()
+
+	for !p.peekTokenIs(token.SEMICOLON) && precedence < precedenceOf(p.peekToken) {
+		infix := p.infixParsers[p.peekToken.Type]
+		if infix == nil {
+			return leftExp
+		}
+
+		p.nextToken()
+
+		leftExp = infix(leftExp)
+	}
+
+	return leftExp
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
@@ -199,6 +222,21 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 	p.nextToken()
 
 	expression.Right = p.parseExpression(PREFIX)
+
+	return expression
+}
+
+func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
+	expression := &ast.InfixExpression{
+		Token:    p.currentToken,
+		Operator: p.currentToken.Literal,
+		Left:     left,
+	}
+
+	precedence := precedenceOf(p.currentToken)
+	p.nextToken()
+
+	expression.Right = p.parseExpression(precedence)
 
 	return expression
 }
