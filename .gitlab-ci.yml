@@ -9,6 +9,6 @@ test:
       junit: junit.xml
 
   script:
-  - go get
+  - go get github.com/jstemmer/go-junit-report
   - go test ./... -v 2>&1 | tee >(go-junit-report > junit.xml)
   
