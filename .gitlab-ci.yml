@@ -9,5 +9,6 @@ test:
       junit: junit.xml
 
   script:
+  - go get
   - go test ./... -v 2>&1 | tee >(go-junit-report > junit.xml)
   
