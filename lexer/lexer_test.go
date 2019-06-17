@@ -3,7 +3,7 @@ package lexer
 import (
 	"monkey-go/token"
 	"testing"
-	"tools/testing/assert"
+	"github.com/samuelweil/go-tools/testing/assert"
 )
 
 func validateLexer(t *testing.T, inp string, exp []token.Token) {

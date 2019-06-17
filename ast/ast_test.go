@@ -3,7 +3,7 @@ package ast
 import (
 	"monkey-go/token"
 	"testing"
-	"tools/testing/assert"
+	"github.com/samuelweil/go-tools/testing/assert"
 )
 
 func TestString(t *testing.T) {

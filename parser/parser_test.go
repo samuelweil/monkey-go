@@ -3,8 +3,8 @@ package parser
 import (
 	"monkey-go/ast"
 	"testing"
-	"tools/testing/assert"
-	"tools/testing/check"
+	"github.com/samuelweil/go-tools/testing/assert"
+	"github.com/samuelweil/go-tools/testing/check"
 )
 
 func TestLetStatement(t *testing.T) {
