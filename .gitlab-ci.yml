@@ -1,18 +1,13 @@
 stages:
 - test
 
-before_script:
-- cp -r ./ $GOPATH/src/${CI_PROJECT_NAME}
-- cd $GOPATH/src/${CI_PROJECT_NAME}
-
 test:
-  image: golang
+  image: golang:1.12
   stage: test
   artifacts:
     reports:
       junit: junit.xml
 
   script:
-  - go get -u github.com/jstemmer/go-junit-report
-  - go test ./... -v 2>&1 | go-junit-report > ${CI_PROJECT_DIR}/junit.xml
+  - go test ./... -v 2>&1 | go-junit-report > junit.xml
   
