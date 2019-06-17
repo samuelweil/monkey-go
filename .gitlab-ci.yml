@@ -9,5 +9,5 @@ test:
       junit: junit.xml
 
   script:
-  - go test ./... -v 2>&1 | go-junit-report > junit.xml
+  - go test ./... -v 2>&1 | tee >(go-junit-report > junit.xml)
   
