@@ -1,5 +1,7 @@
 package token
 
+import "strings"
+
 type Type string
 
 type Token struct {
@@ -8,7 +10,7 @@ type Token struct {
 }
 
 func FromStr(s string) Token {
-	return Token{Type(s), s}
+	return Token{Type(s), strings.ToLower(s)}
 }
 
 func Ident(id string) Token {

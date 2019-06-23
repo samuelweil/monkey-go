@@ -20,6 +20,8 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"5 + 5", infixTest{5, "+", 5}},
 		{"5 - 5", infixTest{5, "-", 5}},
 		{"5 == 5", infixTest{5, "==", 5}},
+		{"true == true", infixTest{true, "==", true}},
+		{"false != true", infixTest{false, "!=", true}},
 	}
 
 	for _, tt := range infixTests {
@@ -60,9 +62,5 @@ func testInfixExpression(exp ast.Expression, expected infixTest) error {
 		return fmt.Errorf("exp.Operator is not %s. Got %s", expected.Operator, opExp.Operator)
 	}
 
-	if e := testLiteralExpression(opExp.Right, expected.Right); e != nil {
-		return e
-	}
-
-	return nil
+	return testLiteralExpression(opExp.Right, expected.Right)
 }
