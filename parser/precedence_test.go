@@ -42,6 +42,25 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	testPrecedence(t, tests)
 }
 
+func TestParenthesePrecedence(t *testing.T) {
+	tests := precedenceTests{
+		{
+			"1 + (2 + 3) + 4",
+			"((1 + (2 + 3)) + 4)",
+		},
+		{
+			"(5 + 5) * 2",
+			"((5 + 5) * 2)",
+		},
+		{
+			"!(true == true)",
+			"(!(true == true))",
+		},
+	}
+
+	testPrecedence(t, tests)
+}
+
 func TestBooleanPrecedence(t *testing.T) {
 	tests := precedenceTests{
 		{
