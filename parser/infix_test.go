@@ -1,24 +1,25 @@
 package parser
 
 import (
+	"fmt"
 	"monkey-go/ast"
 	"testing"
 
 	"github.com/samuelweil/go-tools/testing/assert"
+	"github.com/samuelweil/go-tools/testing/check"
 )
 
 func TestParsingInfixExpressions(t *testing.T) {
 	assert := assert.New(t)
+	check := check.New(t)
 
 	infixTests := []struct {
-		input      string
-		leftValue  int
-		operator   string
-		rightValue int
+		input    string
+		expected infixTest
 	}{
-		{"5 + 5", 5, "+", 5},
-		{"5 - 5", 5, "-", 5},
-		{"5 == 5", 5, "==", 5},
+		{"5 + 5", infixTest{5, "+", 5}},
+		{"5 - 5", infixTest{5, "-", 5}},
+		{"5 == 5", infixTest{5, "==", 5}},
 	}
 
 	for _, tt := range infixTests {
@@ -34,12 +35,34 @@ func TestParsingInfixExpressions(t *testing.T) {
 		exp, ok := stmt.Expression.(*ast.InfixExpression)
 		assert.True(ok, "%s is not an *ast.ExpressionStatement", exp)
 
-		if !testIntegerLiteral(t, exp.Left, tt.leftValue) {
-			return
-		}
-
-		assert.Eq(exp.Operator, tt.operator)
-
-		testIntegerLiteral(t, exp.Right, tt.rightValue)
+		check.NoError(testInfixExpression(exp, tt.expected))
 	}
+}
+
+type infixTest struct {
+	Left     interface{}
+	Operator string
+	Right    interface{}
+}
+
+func testInfixExpression(exp ast.Expression, expected infixTest) error {
+
+	opExp, ok := exp.(*ast.InfixExpression)
+	if !ok {
+		return fmt.Errorf("exp is not *ast.Expression. Got %T", exp)
+	}
+
+	if e := testLiteralExpression(opExp.Left, expected.Left); e != nil {
+		return e
+	}
+
+	if opExp.Operator != expected.Operator {
+		return fmt.Errorf("exp.Operator is not %s. Got %s", expected.Operator, opExp.Operator)
+	}
+
+	if e := testLiteralExpression(opExp.Right, expected.Right); e != nil {
+		return e
+	}
+
+	return nil
 }

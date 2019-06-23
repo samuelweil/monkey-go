@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"monkey-go/ast"
 	"testing"
+
 	"github.com/samuelweil/go-tools/testing/assert"
 	"github.com/samuelweil/go-tools/testing/check"
 )
@@ -138,27 +140,12 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	assert.True(ok, "%s is not a *ast.ExpressionStatement", program.Statements[0])
 
-	testIntegerLiteral(t, stmt.Expression, 5)
-}
-
-func testIntegerLiteral(t *testing.T, il ast.Expression, value int) bool {
-	check := check.New(t)
-
-	literal, ok := il.(*ast.IntegerLiteral)
-	if !ok {
-		t.Errorf("%s is not a *ast.IntegerLiteral", il)
-		return false
-	}
-
-	if !check.Eq(literal.Value, value) {
-		return false
-	}
-
-	return true
+	assert.NoError(testIntegerLiteral(stmt.Expression, 5))
 }
 
 func TestParsingPrefixExpressions(t *testing.T) {
 	assert := assert.New(t)
+	check := check.New(t)
 
 	prefixTests := []struct {
 		input        string
@@ -184,6 +171,50 @@ func TestParsingPrefixExpressions(t *testing.T) {
 
 		assert.Eq(exp.Operator, tt.operator)
 
-		testIntegerLiteral(t, exp.Right, tt.integerValue)
+		check.NoError(testIntegerLiteral(exp.Right, tt.integerValue))
 	}
+}
+
+func testIdentifier(exp ast.Expression, value string) error {
+
+	ident, ok := exp.(*ast.Identifier)
+	if !ok {
+		return fmt.Errorf("exp not *ast.Identifier. Got %T", exp)
+	}
+
+	if ident.Value != value {
+		return fmt.Errorf("ident.Value not %s. Got %s", value, ident.Value)
+	}
+
+	if ident.TokenLiteral() != value {
+		return fmt.Errorf("ident.TokenLiteral() not %s. Got %s", value, ident.TokenLiteral())
+	}
+
+	return nil
+}
+
+func testLiteralExpression(exp ast.Expression, expected interface{}) error {
+
+	switch v := expected.(type) {
+	case int:
+		return testIntegerLiteral(exp, v)
+	case string:
+		return testIdentifier(exp, v)
+	default:
+		return fmt.Errorf("Unhandled expression type %T", exp)
+	}
+}
+
+func testIntegerLiteral(il ast.Expression, value int) error {
+
+	literal, ok := il.(*ast.IntegerLiteral)
+	if !ok {
+		return fmt.Errorf("%s is not a *ast.IntegerLiteral", il)
+	}
+
+	if literal.Value != value {
+		return fmt.Errorf("literal.Value is not %v. Got %v", value, literal.Value)
+	}
+
+	return nil
 }
