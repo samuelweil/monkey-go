@@ -12,55 +12,41 @@ import (
 func TestLetStatement(t *testing.T) {
 
 	assert := assert.New(t)
-
-	input := `
-	let x = 5;
-	let y = 10;
-	let foobar = 838383;
-	`
-	p := New(input)
-
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-
-	assert.Eq(len(program.Statements), 3)
-
-	tests := []struct {
-		expectedIdentifier string
-	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
-	}
-
-	for i, tt := range tests {
-		stmt := program.Statements[i]
-
-		if !testLetStatement(t, stmt, tt.expectedIdentifier) {
-			return
-		}
-	}
-
-}
-
-func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	check := check.New(t)
 
+	tests := []struct {
+		input              string
+		expectedIdentifier string
+		expectedValue      interface{}
+	}{
+		{"let x = 5;", "x", 5},
+		{"let y = true", "y", true},
+		{"let foobar = y", "foobar", "y"},
+	}
+
+	for _, tt := range tests {
+
+		p := New(tt.input)
+		prgm := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		assert.Eq(len(prgm.Statements), 1)
+
+		stmt := prgm.Statements[0]
+		assert.NoError(testLetStatement(stmt, tt.expectedIdentifier))
+
+		val := stmt.(*ast.LetStatement).Value
+		check.NoError(testLiteralExpression(val, tt.expectedValue))
+	}
+}
+
+func testLetStatement(s ast.Statement, name string) error {
 	stmt, ok := s.(*ast.LetStatement)
 	if !ok {
-		t.Errorf("Expected *ast.LetStatement, Got %T", s)
-		return false
+		return fmt.Errorf("Expected *ast.LetStatement, Got %T", s)
 	}
 
-	if !check.Eq(stmt.Name.Value, name) {
-		return false
-	}
-
-	if !check.Eq(stmt.Name.TokenLiteral(), name) {
-		return false
-	}
-
-	return true
+	return testIdentifier(stmt.Name, name)
 }
 
 func checkParserErrors(t *testing.T, p *Parser) {
@@ -81,26 +67,25 @@ func TestReturnStatements(t *testing.T) {
 	assert := assert.New(t)
 	check := check.New(t)
 
-	input := `
-	ret 5;
-	ret 10;
-	ret 993322;
-	`
-	p := New(input)
+	tests := []struct {
+		input         string
+		expectedValue interface{}
+	}{
+		{"ret 5;", 5},
+		{"ret 10;", 10},
+		{"ret false", false},
+		{"ret x;", "x"},
+	}
 
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
+	for _, tt := range tests {
+		p := New(tt.input)
+		prgm := p.ParseProgram()
+		checkParserErrors(t, p)
 
-	assert.Eq(len(program.Statements), 3)
+		stmt, ok := prgm.Statements[0].(*ast.ReturnStatement)
+		assert.True(ok, "stmt is not a *ast.ReturnStatement. Got %T", prgm.Statements[0])
 
-	for _, stmt := range program.Statements {
-		retStmt, ok := stmt.(*ast.ReturnStatement)
-		if !ok {
-			t.Errorf("stmt not *ast.ReturnStatement, got=%T", stmt)
-			continue
-		}
-
-		check.Eq(retStmt.TokenLiteral(), "ret")
+		check.NoError(testLiteralExpression(stmt.ReturnValue, tt.expectedValue))
 	}
 }
 
