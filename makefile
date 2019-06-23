@@ -7,14 +7,14 @@ run: $(EXEC)
 	$(EXEC)
 
 $(EXEC): $(SRC)
-	go build
+	@go build
 
 build: $(EXEC)
 
 test: build
-	go test ./...
+	@go test ./...
 
 clean: 
-	rm -f $(EXEC)
+	@go clean --testcache
 
 .PHONY: all run clean test
