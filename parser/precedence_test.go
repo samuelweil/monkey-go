@@ -96,3 +96,18 @@ func testPrecedence(t *testing.T, tests precedenceTests) {
 		check.Eq(program.String(), tt.expected)
 	}
 }
+
+func TestCallPrecedence(t *testing.T) {
+	tests := precedenceTests{
+		{
+			"a + add(b + c) + d",
+			"((a + add((b + c))) + d)",
+		},
+		{
+			"add(a, b, 1, 2 * 3, add(6, 7 * 8))",
+			"add(a, b, 1, (2 * 3), add(6, (7 * 8)))",
+		},
+	}
+
+	testPrecedence(t, tests)
+}
