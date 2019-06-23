@@ -21,7 +21,7 @@ const (
 	OR  = "||"
 )
 
-var operators = map[string]Token{
+var Operators = Set{
 	ASSIGN:   Assign(),
 	PLUS:     Plus(),
 	MINUS:    Minus(),
@@ -101,22 +101,4 @@ func Ampersand() Token {
 
 func Pipe() Token {
 	return FromStr(PIPE)
-}
-
-func Operator(c byte) Token {
-	return operators[string(c)]
-}
-
-func IsOperator(c byte) bool {
-	_, b := operators[string(c)]
-	return b
-}
-
-func IsMultiCharOperator(s string) bool {
-	_, b := operators[s]
-	return b
-}
-
-func MultiCharOperator(s string) Token {
-	return operators[s]
 }

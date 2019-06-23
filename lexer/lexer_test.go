@@ -3,6 +3,7 @@ package lexer
 import (
 	"monkey-go/token"
 	"testing"
+
 	"github.com/samuelweil/go-tools/testing/assert"
 )
 
@@ -15,7 +16,7 @@ func validateLexer(t *testing.T, inp string, exp []token.Token) {
 	for _, tt := range exp {
 		tok := lexer.NextToken()
 
-		assert.Eq(tt, tok)
+		assert.Eq(tok, tt)
 	}
 }
 
