@@ -1,18 +1,35 @@
 package eval
 
-import "monkey-go/object"
+import (
+	"monkey-go/object"
+	"monkey-go/token"
+)
 
 func evalInfixExpression(op string, l, r object.Object) object.Object {
 
-	if _, ok := l.(*object.Integer); !ok {
+	switch l := l.(type) {
+	
+	case *object.Integer:
+		return evalIntegerInfix(op, l, r)
+	
+	case *object.Boolean:
+		return evalBoolInfix(op, l, r)
+
+	default:
 		return Null
 	}
+}
 
-	if _, ok := r.(*object.Integer); !ok {
-		return Null
+func evalBoolInfix(op string, l, r object.Object) object.Object {
+	if op == token.EQ {
+		return boolean(l == r)
+	} 
+
+	if op == token.NE {
+		return boolean(l != r)
 	}
 
-	return evalIntegerInfix(op, l, r)
+	return Null
 }
 
 func evalIntegerInfix(op string, l, r object.Object) object.Object {
