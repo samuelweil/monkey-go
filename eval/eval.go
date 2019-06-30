@@ -1,6 +1,7 @@
 package eval
 
 import (
+	"fmt"
 	"monkey-go/ast"
 	"monkey-go/object"
 )
@@ -55,5 +56,13 @@ func boolean(b bool) *object.Boolean {
 }
 
 func evalPrefixExpression(op string, obj object.Object) object.Object {
-	return prefixes[op](obj)
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Prefix operator %s has no defined eval function\n", op)
+		}
+	}()
+
+	evaluator := prefixEvals[op]
+	return evaluator(obj)
 }
