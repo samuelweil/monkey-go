@@ -19,8 +19,7 @@ func Eval(node ast.Node) object.Object {
 		return &object.Integer{Value: node.Value}
 
 	case *ast.Boolean:
-		b := object.Boolean(node.Value)
-		return &b
+		return boolean(node.Value)
 
 	}
 
@@ -35,4 +34,18 @@ func evalStatements(stmts []ast.Statement) object.Object {
 	}
 
 	return result
+}
+
+var (
+	True  = &object.Boolean{Value: true}
+	False = &object.Boolean{Value: false}
+	Null  = &object.Null{}
+)
+
+func boolean(b bool) *object.Boolean {
+	if b {
+		return True
+	}
+
+	return False
 }

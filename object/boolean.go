@@ -1,10 +1,13 @@
 package object
 
-import ("fmt")
+import (
+	"fmt"
+)
 
-type Boolean bool
+type Boolean struct {
+	Value bool
+}
 
-func (b *Boolean) Inspect() string { return fmt.Sprintf("%t", bool(*b)) }
+func (b *Boolean) Inspect() string { return fmt.Sprintf("%t", b.Value) }
 
 func (b *Boolean) Type() Type { return BOOLEAN }
-

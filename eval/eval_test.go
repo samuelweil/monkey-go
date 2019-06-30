@@ -6,7 +6,7 @@ import (
 
 	"monkey-go/object"
 	"monkey-go/parser"
-	
+
 	"github.com/samuelweil/go-tools/testing/check"
 )
 
@@ -22,16 +22,16 @@ func TestIntegerEval(t *testing.T) {
 	check := check.New(t)
 
 	tests := []struct {
-		input string
+		input    string
 		expected int
-	} {
+	}{
 		{"5", 5},
 		{"10", 10},
 	}
 
 	for _, tt := range tests {
 		result := testEval(tt.input)
-		check.Nil(testIntegerObject(result, tt.expected))	
+		check.Nil(testIntegerObject(result, tt.expected))
 	}
 }
 
@@ -52,10 +52,10 @@ func TestBooleanEval(t *testing.T) {
 
 	check := check.New(t)
 
-	tests := []struct{
-		input string
+	tests := []struct {
+		input    string
 		expected bool
-	} {
+	}{
 		{"true", true},
 		{"false", false},
 	}
@@ -72,8 +72,8 @@ func testBooleanObject(obj object.Object, exp bool) error {
 		return fmt.Errorf("object is not a Boolean. Got %T (%+v)", obj, obj)
 	}
 
-	if bool(*result) != exp {
-		return fmt.Errorf("Boolean is not %t. Got %t", bool(*result), exp)
+	if result.Value != exp {
+		return fmt.Errorf("Boolean is not %t. Got %t", result.Value, exp)
 	}
 
 	return nil
