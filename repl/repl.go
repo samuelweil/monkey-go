@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"monkey-go/parser"
 	"monkey-go/eval"
+	"monkey-go/parser"
 )
 
 const PROMPT = ">> "
@@ -32,7 +32,7 @@ func Start(in io.Reader, out io.Writer) {
 		if evaluated := eval.Eval(prgm); evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
-		}	
+		}
 	}
 }
 
