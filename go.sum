@@ -1,2 +1,4 @@
 github.com/samuelweil/go-tools/testing v0.0.0-20190630193728-b9c102f7181d h1:l04228nHUvhM9Hd0N5ZIcZOh+Lefz8DRPqhKoBf8Hck=
 github.com/samuelweil/go-tools/testing v0.0.0-20190630193728-b9c102f7181d/go.mod h1:98tsxkjVBnJakv12PMxsCepLfXhecGvBHOvrhWec4qQ=
+github.com/samuelweil/go-tools/testing v0.0.0-20190630221649-4ea967dd4840 h1:4YphW7eriVZ1+3aH/r3cgMNCRmRNijm2ehWbZF/F56U=
+github.com/samuelweil/go-tools/testing v0.0.0-20190630221649-4ea967dd4840/go.mod h1:98tsxkjVBnJakv12PMxsCepLfXhecGvBHOvrhWec4qQ=
