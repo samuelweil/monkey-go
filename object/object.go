@@ -12,4 +12,5 @@ const (
 	INTEGER = iota + 1
 	BOOLEAN
 	NULL
+	RETURN_VALUE
 )

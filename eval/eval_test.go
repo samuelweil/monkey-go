@@ -137,9 +137,9 @@ func TestConditionals(t *testing.T) {
 	check := check.New(t)
 
 	tests := []struct {
-		input string
+		input    string
 		expected interface{}
-	} {
+	}{
 		{"if (true) { 10 }", 10},
 		{"if (false) { 10 }", nil},
 		{"if (1) { 10 }", 10},
@@ -157,6 +157,39 @@ func TestConditionals(t *testing.T) {
 			check.NoError(testIntegerObject(evaluated, integer))
 		} else {
 			check.Eq(evaluated, Null)
-		}	
+		}
+	}
+}
+
+func TestReturn(t *testing.T) {
+
+	check := check.New(t)
+
+	tests := []struct {
+		input    string
+		expected int
+	}{
+		{"ret 10;", 10},
+		{"ret 10; 9;", 10},
+		{"ret 2 * 5; 9;", 10},
+		{"9; ret 2 * 5; 9;", 10},
+		{`
+			if (10 > 1) {
+				if (10 > 1) {
+					ret 10;
+
+					if (true) {
+						ret 16;
+					}
+				}
+				ret 1;
+			}`,
+			10,
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		check.NoError(testIntegerObject(evaluated, tt.expected))
 	}
 }
