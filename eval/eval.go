@@ -1,7 +1,6 @@
 package eval
 
 import (
-	"fmt"
 	"monkey-go/ast"
 	"monkey-go/object"
 )
@@ -19,6 +18,11 @@ func Eval(node ast.Node) object.Object {
 	case *ast.PrefixExpression:
 		right := Eval(node.Right)
 		return evalPrefixExpression(node.Operator, right)
+
+	case *ast.InfixExpression:
+		left := Eval(node.Left)
+		right := Eval(node.Right)
+		return evalInfixExpression(node.Operator, left, right)
 
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
@@ -57,12 +61,9 @@ func boolean(b bool) *object.Boolean {
 
 func evalPrefixExpression(op string, obj object.Object) object.Object {
 
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Prefix operator %s has no defined eval function\n", op)
-		}
-	}()
+	if evaluator, ok := prefixEvals[op]; ok {
+		return evaluator(obj)
+	}
 
-	evaluator := prefixEvals[op]
-	return evaluator(obj)
+	return nil
 }
