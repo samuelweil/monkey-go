@@ -1,4 +1,4 @@
-EXEC=monkey-go
+EXEC=./monkey-go
 SRC=$(shell find . -type f -name "*.go")
 
 all: build
@@ -7,7 +7,7 @@ run: $(EXEC)
 	$(EXEC)
 
 $(EXEC): $(SRC)
-	@go build
+	go build
 
 build: $(EXEC)
 
