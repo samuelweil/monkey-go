@@ -15,6 +15,10 @@ func Eval(node ast.Node) object.Object {
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression)
 
+	case *ast.PrefixExpression:
+		right := Eval(node.Right)
+		return evalPrefixExpression(node.Operator, right)
+
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 
@@ -48,4 +52,8 @@ func boolean(b bool) *object.Boolean {
 	}
 
 	return False
+}
+
+func evalPrefixExpression(op string, obj object.Object) object.Object {
+	return prefixes[op](obj)
 }

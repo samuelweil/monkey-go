@@ -31,7 +31,7 @@ func TestIntegerEval(t *testing.T) {
 
 	for _, tt := range tests {
 		result := testEval(tt.input)
-		check.Nil(testIntegerObject(result, tt.expected))
+		check.NoError(testIntegerObject(result, tt.expected))
 	}
 }
 
@@ -62,7 +62,7 @@ func TestBooleanEval(t *testing.T) {
 
 	for _, tt := range tests {
 		result := testEval(tt.input)
-		check.Nil(testBooleanObject(result, tt.expected))
+		check.NoError(testBooleanObject(result, tt.expected))
 	}
 }
 
@@ -77,4 +77,26 @@ func testBooleanObject(obj object.Object, exp bool) error {
 	}
 
 	return nil
+}
+
+func TestBangOperator(t *testing.T) {
+
+	check := check.New(t)
+
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"!true", false},
+		{"!false", true},
+		{"!5", false},
+		{"!!true", true},
+		{"!!false", false},
+		{"!!5", true},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		check.NoError(testBooleanObject(evaluated, tt.expected))
+	}
 }
