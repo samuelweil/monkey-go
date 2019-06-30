@@ -1,5 +1,5 @@
-EXEC=./monkey-go
-SRC=$(shell find ./ -type f -name *.go)
+EXEC=monkey-go
+SRC=$(shell find . -type f -name "*.go")
 
 all: build
 
