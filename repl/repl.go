@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"monkey-go/parser"
+	"monkey-go/eval"
 )
 
 const PROMPT = ">> "
@@ -28,8 +29,10 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, prgm.String())
-		io.WriteString(out, "\n")
+		if evaluated := eval.Eval(prgm); evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}	
 	}
 }
 
