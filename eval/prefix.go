@@ -8,12 +8,7 @@ var prefixEvals = map[string]func(object.Object) object.Object{
 }
 
 func bang(obj object.Object) object.Object {
-	switch obj {
-	case False, Null:
-		return True
-	default:
-		return False
-	}
+	return boolean(!obj.Truthy())
 }
 
 func minus(obj object.Object) object.Object {

@@ -131,3 +131,32 @@ func TestBangOperator(t *testing.T) {
 		check.NoError(testBooleanObject(evaluated, tt.expected))
 	}
 }
+
+func TestConditionals(t *testing.T) {
+
+	check := check.New(t)
+
+	tests := []struct {
+		input string
+		expected interface{}
+	} {
+		{"if (true) { 10 }", 10},
+		{"if (false) { 10 }", nil},
+		{"if (1) { 10 }", 10},
+		{"if (1 < 2) { 10 }", 10},
+		{"if (1 > 2) { 10 }", nil},
+		{"if (1 > 2) { 10 } else { 20 }", 20},
+		{"if (1 < 2) { 10 } else { 20 }", 10},
+		{"if (0) { 10 } else { 20 }", 20},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			check.NoError(testIntegerObject(evaluated, integer))
+		} else {
+			check.Eq(evaluated, Null)
+		}	
+	}
+}

@@ -9,5 +9,5 @@ type Boolean struct {
 }
 
 func (b *Boolean) Inspect() string { return fmt.Sprintf("%t", b.Value) }
-
 func (b *Boolean) Type() Type { return BOOLEAN }
+func (b *Boolean) Truthy() bool { return b.Value }
