@@ -14,7 +14,7 @@ func testEval(inp string) object.Object {
 	p := parser.New(inp)
 	program := p.ParseProgram()
 
-	return Eval(program)
+	return Eval(program, object.NewEnvironment())
 }
 
 func TestIntegerEval(t *testing.T) {

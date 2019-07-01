@@ -6,12 +6,14 @@ import (
 	"io"
 	"monkey-go/eval"
 	"monkey-go/parser"
+	"monkey-go/object"
 )
 
 const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(PROMPT)
@@ -29,7 +31,7 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		if evaluated := eval.Eval(prgm); evaluated != nil {
+		if evaluated := eval.Eval(prgm, env); evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}

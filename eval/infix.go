@@ -5,23 +5,23 @@ import (
 	"monkey-go/token"
 )
 
-func evalInfixExpression(op string, l, r object.Object) object.Object {
+func evalInfixExpression(op string, l, r object.Object, env *object.Environment) object.Object {
 	switch {
 	case l.Type() != r.Type():
 		return newError("type mismatch: %s %s %s", l.Type(), op, r.Type())
 
 	case l.Type() == object.BOOLEAN:
-		return evalBoolInfix(op, l, r)
+		return evalBoolInfix(op, l, r, env)
 
 	case l.Type() == object.INTEGER:
-		return evalIntegerInfix(op, l, r)
+		return evalIntegerInfix(op, l, r, env)
 
 	default:
 		return newError("unknown operator: %s %s %s", l.Type(), op, r.Type())
 	}
 }
 
-func evalBoolInfix(op string, l, r object.Object) object.Object {
+func evalBoolInfix(op string, l, r object.Object, env *object.Environment) object.Object {
 	if op == token.EQ {
 		return boolean(l == r)
 	}
@@ -33,7 +33,7 @@ func evalBoolInfix(op string, l, r object.Object) object.Object {
 	return newError("unknown operator: %s %s %s", l.Type(), op, r.Type())
 }
 
-func evalIntegerInfix(op string, l, r object.Object) object.Object {
+func evalIntegerInfix(op string, l, r object.Object, env *object.Environment) object.Object {
 
 	leftVal := l.(*object.Integer).Value
 	rightVal := r.(*object.Integer).Value

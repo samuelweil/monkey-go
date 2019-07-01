@@ -6,34 +6,40 @@ import (
 	"monkey-go/object"
 )
 
-func Eval(node ast.Node) object.Object {
+func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	switch node := node.(type) {
 
 	case *ast.Program:
-		return evalProgram(node)
+		return evalProgram(node, env)
 
 	case *ast.ExpressionStatement:
-		return Eval(node.Expression)
+		return Eval(node.Expression, env)
 
 	case *ast.BlockStatement:
-		return evalBlockStatement(node)
+		return evalBlockStatement(node, env)
+
+	case *ast.LetStatement:
+		return evalLetStatement(node, env)
 
 	case *ast.ReturnStatement:
-		val := Eval(node.ReturnValue)
+		val := Eval(node.ReturnValue, env)
 		return &object.ReturnValue{Value: val}
 
+	case *ast.Identifier:
+		return evalIdentifier(node, env)
+
 	case *ast.PrefixExpression:
-		right := Eval(node.Right)
-		return evalPrefixExpression(node.Operator, right)
+		right := Eval(node.Right, env)
+		return evalPrefixExpression(node.Operator, right, env)
 
 	case *ast.InfixExpression:
-		left := Eval(node.Left)
-		right := Eval(node.Right)
-		return evalInfixExpression(node.Operator, left, right)
+		left := Eval(node.Left, env)
+		right := Eval(node.Right, env)
+		return evalInfixExpression(node.Operator, left, right, env)
 
 	case *ast.IfExpression:
-		return evalIfExpression(node)
+		return evalIfExpression(node, env)
 
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
@@ -46,11 +52,11 @@ func Eval(node ast.Node) object.Object {
 	return Null
 }
 
-func evalProgram(program *ast.Program) object.Object {
+func evalProgram(program *ast.Program, env *object.Environment) object.Object {
 	var result object.Object
 
 	for _, statement := range program.Statements {
-		result = Eval(statement)
+		result = Eval(statement, env)
 
 		switch result := result.(type) {
 		case *object.ReturnValue:
@@ -63,11 +69,11 @@ func evalProgram(program *ast.Program) object.Object {
 	return result
 }
 
-func evalBlockStatement(bs *ast.BlockStatement) object.Object {
+func evalBlockStatement(bs *ast.BlockStatement, env *object.Environment) object.Object {
 	var result object.Object
 
 	for _, statement := range bs.Statements {
-		result = Eval(statement)
+		result = Eval(statement, env)
 
 		if result != nil {
 
@@ -79,6 +85,25 @@ func evalBlockStatement(bs *ast.BlockStatement) object.Object {
 	}
 
 	return result
+}
+
+func evalLetStatement(ls *ast.LetStatement, env *object.Environment) object.Object {
+	val := Eval(ls.Value, env)
+	if isError(val) {
+		return val
+	}
+
+	env.Set(ls.Name.Value, val)
+	return val
+}
+
+func evalIdentifier(ident *ast.Identifier, env *object.Environment) object.Object {
+	val, ok := env.Get(ident.Value)
+	if !ok {
+		return newError("identifier not found: %s", ident.Value)
+	}
+
+	return val
 }
 
 var (
@@ -95,7 +120,7 @@ func boolean(b bool) *object.Boolean {
 	return False
 }
 
-func evalPrefixExpression(op string, obj object.Object) object.Object {
+func evalPrefixExpression(op string, obj object.Object, env *object.Environment) object.Object {
 
 	if evaluator, ok := prefixEvals[op]; ok {
 		return evaluator(obj)
@@ -108,4 +133,8 @@ func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{
 		Message: fmt.Sprintf(format, a...),
 	}
+}
+
+func isError(obj object.Object) bool {
+	return obj.Type() == object.ERROR
 }
