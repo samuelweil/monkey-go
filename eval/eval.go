@@ -1,6 +1,7 @@
 package eval
 
 import (
+	"fmt"
 	"monkey-go/ast"
 	"monkey-go/object"
 )
@@ -42,7 +43,7 @@ func Eval(node ast.Node) object.Object {
 
 	}
 
-	return nil
+	return Null
 }
 
 func evalProgram(program *ast.Program) object.Object {
@@ -51,8 +52,11 @@ func evalProgram(program *ast.Program) object.Object {
 	for _, statement := range program.Statements {
 		result = Eval(statement)
 
-		if returnValue, ok := result.(*object.ReturnValue); ok {
-			return returnValue.Value
+		switch result := result.(type) {
+		case *object.ReturnValue:
+			return result.Value
+		case *object.Error:
+			return result
 		}
 	}
 
@@ -65,8 +69,12 @@ func evalBlockStatement(bs *ast.BlockStatement) object.Object {
 	for _, statement := range bs.Statements {
 		result = Eval(statement)
 
-		if result != nil && result.Type() == object.RETURN_VALUE {
-			return result
+		if result != nil {
+
+			typ := result.Type()
+			if typ == object.RETURN_VALUE || typ == object.ERROR {
+				return result
+			}
 		}
 	}
 
@@ -93,5 +101,11 @@ func evalPrefixExpression(op string, obj object.Object) object.Object {
 		return evaluator(obj)
 	}
 
-	return nil
+	return newError("unknown operator: %s%s", op, obj.Type())
+}
+
+func newError(format string, a ...interface{}) *object.Error {
+	return &object.Error{
+		Message: fmt.Sprintf(format, a...),
+	}
 }

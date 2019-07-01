@@ -14,7 +14,7 @@ func bang(obj object.Object) object.Object {
 func minus(obj object.Object) object.Object {
 	val, ok := obj.(*object.Integer)
 	if !ok {
-		return Null
+		return newError("unknown operator: -%s", obj.Type())
 	}
 
 	return &object.Integer{Value: -val.Value}

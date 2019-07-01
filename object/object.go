@@ -1,6 +1,6 @@
 package object
 
-type Type int
+type Type string
 
 type Object interface {
 	Type() Type
@@ -9,8 +9,9 @@ type Object interface {
 }
 
 const (
-	INTEGER = iota + 1
-	BOOLEAN
-	NULL
-	RETURN_VALUE
+	INTEGER      = "INT"
+	BOOLEAN      = "BOOL"
+	NULL         = "NULL"
+	RETURN_VALUE = "RETURN"
+	ERROR        = "ERROR"
 )
