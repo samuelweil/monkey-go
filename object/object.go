@@ -14,4 +14,5 @@ const (
 	NULL         = "NULL"
 	RETURN_VALUE = "RETURN"
 	ERROR        = "ERROR"
+	FUNCTION     = "FUNCTION"
 )
