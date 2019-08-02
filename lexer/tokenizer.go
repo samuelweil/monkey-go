@@ -56,6 +56,24 @@ func (w *WhileTokenizer) GetToken(s string) (token.Token, string) {
 
 }
 
+type BetweenTokenizer struct {
+	trigger     byte
+	constructor func(string) token.Token
+}
+
+func (bt *BetweenTokenizer) Check(b byte) bool {
+	return b == bt.trigger
+}
+
+func (bt *BetweenTokenizer) GetToken(s string) (token.Token, string) {
+	var i int
+
+	for i = 1; i < len(s) && s[i] != bt.trigger; i++ {
+	}
+
+	return bt.constructor(s[1:i]), s[i+1:]
+}
+
 type UntilTokenizer struct {
 	from        func(b byte) bool
 	until       func(b byte) bool

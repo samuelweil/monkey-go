@@ -69,10 +69,25 @@ func TestDelimiters(t *testing.T) {
 	validateLexer(t, input, tests)
 }
 
+func TestString(t *testing.T) {
+	input := `
+	"Hello, World"
+	"Other string"`
+
+	tests := []token.Token{
+		token.String("Hello, World"),
+		token.String("Other string"),
+	}
+
+	validateLexer(t, input, tests)
+}
+
 func TestLexer(t *testing.T) {
 	input := `
 	let five = 5;	
 	let ten = 10;
+
+	let hello = "world";
 
 	let add = fn(x, y) {
 		x + y;
@@ -94,6 +109,7 @@ func TestLexer(t *testing.T) {
 	tests := []token.Token{
 		token.Let(), token.Ident("five"), token.Assign(), token.Int("5"), token.SemiColon(),
 		token.Let(), token.Ident("ten"), token.Assign(), token.Int("10"), token.SemiColon(),
+		token.Let(), token.Ident("hello"), token.Assign(), token.String("world"), token.SemiColon(),
 		token.Let(), token.Ident("add"), token.Assign(), token.Function(), token.LParen(),
 		token.Ident("x"), token.Comma(), token.Ident("y"), token.RParen(), token.LBrace(),
 		token.Ident("x"), token.Plus(), token.Ident("y"), token.SemiColon(),
