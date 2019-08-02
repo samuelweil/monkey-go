@@ -1,6 +1,8 @@
 package lexer
 
-import "monkey-go/token"
+import (
+	"monkey-go/token"
+)
 
 type tokenizer interface {
 	Check(b byte) bool
@@ -35,25 +37,42 @@ func (t SetTokenizer) checkString(s string) bool {
 	return ok
 }
 
-type RuleTokenizer struct {
-	rule        func(b byte) bool
+type WhileTokenizer struct {
+	while       func(byte) bool
+	constructor func(string) token.Token
+}
+
+func (w *WhileTokenizer) Check(b byte) bool {
+	return w.while(b)
+}
+
+func (w *WhileTokenizer) GetToken(s string) (token.Token, string) {
+
+	var i int
+	for i = 0; i < len(s) && w.while(s[i]); i++ {
+	}
+
+	return w.constructor(s[:i]), s[i:]
+
+}
+
+type UntilTokenizer struct {
+	from        func(b byte) bool
+	until       func(b byte) bool
 	constructor func(s string) token.Token
 }
 
-func (r RuleTokenizer) Check(b byte) bool {
-	return r.rule(b)
+func (u *UntilTokenizer) Check(b byte) bool {
+	return u.from(b)
 }
 
-func (r RuleTokenizer) GetToken(s string) (token.Token, string) {
+func (u *UntilTokenizer) GetToken(s string) (token.Token, string) {
+	var i int
 
-	for i := 0; i < len(s); i++ {
-		if !r.Check(s[i]) {
-			return r.constructor(s[:i]), s[i:]
-		}
+	for i = 0; i < len(s) && !u.until(s[i]); i++ {
 	}
 
-	return r.constructor(s), ""
-
+	return u.constructor(s[:i]), s[i:]
 }
 
 type IdentTokenizer struct{}

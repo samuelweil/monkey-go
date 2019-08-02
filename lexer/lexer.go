@@ -13,8 +13,8 @@ func New(input string) *Lexer {
 		tokenizers: []tokenizer{
 			SetTokenizer{token.Operators},
 			SetTokenizer{token.Delimiters},
-			RuleTokenizer{
-				rule:        isDigit,
+			&WhileTokenizer{
+				while:       isDigit,
 				constructor: token.Int,
 			},
 			IdentTokenizer{},
