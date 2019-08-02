@@ -73,12 +73,17 @@ func TestString(t *testing.T) {
 	input := `
 	"Hello, World"
 	'Hello, World'
-	"Other string"`
+	"Other string"
+	"This is Sam's test"
+	'Test double quote "'
+	`
 
 	tests := []token.Token{
 		token.String("Hello, World"),
 		token.String("Hello, World"),
 		token.String("Other string"),
+		token.String("This is Sam's test"),
+		token.String("Test double quote \""),
 	}
 
 	validateLexer(t, input, tests)
