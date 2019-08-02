@@ -21,6 +21,10 @@ func New(input string) *Lexer {
 				trigger:     '"',
 				constructor: token.String,
 			},
+			&BetweenTokenizer{
+				trigger:     '\'',
+				constructor: token.String,
+			},
 			IdentTokenizer{},
 		},
 	}
