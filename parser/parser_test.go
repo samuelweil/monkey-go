@@ -128,6 +128,24 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	assert.NoError(testIntegerLiteral(stmt.Expression, 5))
 }
 
+func TestStringLiteralExpression(t *testing.T) {
+	assert := assert.New(t)
+
+	input := `"hello, world"`
+
+	p := New(input)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	assert.Eq(len(program.Statements), 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	assert.True(ok, "%s is not a *ast.ExpressionStatement", program.Statements[0])
+
+	assert.NoError(testStringLiteral(stmt.Expression, "hello, world"))
+
+}
+
 func TestParsingPrefixExpressions(t *testing.T) {
 	assert := assert.New(t)
 	check := check.New(t)
@@ -236,6 +254,20 @@ func testIntegerLiteral(il ast.Expression, value int) error {
 	literal, ok := il.(*ast.IntegerLiteral)
 	if !ok {
 		return fmt.Errorf("%s is not a *ast.IntegerLiteral", il)
+	}
+
+	if literal.Value != value {
+		return fmt.Errorf("literal.Value is not %v. Got %v", value, literal.Value)
+	}
+
+	return nil
+}
+
+func testStringLiteral(sl ast.Expression, value string) error {
+	literal, ok := sl.(*ast.StringLiteral)
+
+	if !ok {
+		return fmt.Errorf("%s is not a *ast.StringLiteral", sl)
 	}
 
 	if literal.Value != value {

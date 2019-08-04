@@ -44,6 +44,7 @@ func New(s string) *Parser {
 	p.registerPrefix(token.RPAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunction)
+	p.registerPrefix(token.STRING, p.parseStringLiteral)
 
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
@@ -356,6 +357,13 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	lit.Value = value
 	return lit
 
+}
+
+func (p *Parser) parseStringLiteral() ast.Expression {
+	return &ast.StringLiteral{
+		Token: p.currentToken,
+		Value: p.currentToken.Literal,
+	}
 }
 
 func (p *Parser) noPrefixParseFnError(t token.Type) {
