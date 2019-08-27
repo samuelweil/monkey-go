@@ -25,12 +25,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
 		return &object.ReturnValue{Value: val}
-	
+
 	case *ast.FunctionLiteral:
-		return &object.Function{ 
+		return &object.Function{
 			Parameters: node.Parameters,
-			Env: env, 
-			Body: node.Body,
+			Env:        env,
+			Body:       node.Body,
 		}
 
 	case *ast.CallExpression:
@@ -66,6 +66,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.Boolean:
 		return boolean(node.Value)
+
+	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
 
 	}
 
@@ -175,7 +178,7 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
 	function, ok := fn.(*object.Function)
-	if !ok { 
+	if !ok {
 		return newError("not a function: %s", fn.Type())
 	}
 

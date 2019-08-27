@@ -193,3 +193,33 @@ func TestReturn(t *testing.T) {
 		check.NoError(testIntegerObject(evaluated, tt.expected))
 	}
 }
+
+func TestStrings(t *testing.T) {
+	check := check.New(t)
+
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"'hello'", "hello"},
+		{"'hello' + ',' + ' world'", "hello, world"},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		check.NoError(testStringObject(evaluated, tt.expected))
+	}
+}
+
+func testStringObject(obj object.Object, expected string) error {
+
+	result, ok := obj.(*object.String)
+	if !ok {
+		return fmt.Errorf("Object is not a string. Got %T", obj)
+	}
+
+	if result.Value != expected {
+		return fmt.Errorf("Expected %s, Got %s", expected, result.Value)
+	}
+	return nil
+}

@@ -15,4 +15,5 @@ const (
 	RETURN_VALUE = "RETURN"
 	ERROR        = "ERROR"
 	FUNCTION     = "FUNCTION"
+	STRING       = "STRING"
 )
