@@ -11,6 +11,7 @@ const (
 	PRODUCT
 	PREFIX
 	CALL
+	INDEX
 )
 
 var precedences = map[token.Type]int{
@@ -23,6 +24,7 @@ var precedences = map[token.Type]int{
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
 	token.LPAREN:   CALL,
+	token.LBRACK:   INDEX,
 }
 
 func precedenceOf(t token.Token) int {
