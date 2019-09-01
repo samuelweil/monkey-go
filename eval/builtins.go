@@ -24,6 +24,9 @@ func length(args ...object.Object) object.Object {
 	case *object.String:
 		return &object.Integer{Value: len(arg.Value)}
 
+	case *object.Array:
+		return &object.Integer{Value: len(arg.Elements)}
+
 	default:
 		return newError("len does not support arguments of type %s", args[0].Type())
 	}
