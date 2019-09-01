@@ -17,6 +17,7 @@ func TestBuiltinFuncs(t *testing.T) {
 		{`len("hello, world")`, 12},
 		{`len(1)`, "len does not support arguments of type INT"},
 		{`len("one", "two")`, "len takes 1 arguments, got 2"},
+		{`exit()`, nil},
 	}
 
 	assert := assert.New(t)
@@ -33,6 +34,9 @@ func TestBuiltinFuncs(t *testing.T) {
 			errObj, ok := evaluated.(*object.Error)
 			assert.True(ok, "object is not Error. got %T, (%+v)", evaluated, evaluated)
 			assert.Eq(errObj.Message, expected)
+
+		case nil:
+			assert.Nil(evaluated)
 		}
 	}
 }

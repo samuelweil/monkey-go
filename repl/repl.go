@@ -11,6 +11,8 @@ import (
 
 const PROMPT = ">> "
 
+var debugMode bool = true
+
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
@@ -32,8 +34,15 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		if evaluated := eval.Eval(prgm, env); evaluated != nil {
+
+			if debugMode {
+				fmt.Printf("%T (%+v)", evaluated, evaluated)
+			}
+
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
+		} else {
+			break
 		}
 	}
 }

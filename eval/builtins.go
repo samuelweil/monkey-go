@@ -1,10 +1,17 @@
 package eval
 
-import "monkey-go/object"
+import (
+	"monkey-go/object"
+)
 
 var builtins = map[string]*object.Builtin{
 	"len": &object.Builtin{
 		Fn: length,
+	},
+	"exit": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			return nil
+		},
 	},
 }
 
