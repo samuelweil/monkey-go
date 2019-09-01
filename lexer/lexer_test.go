@@ -89,6 +89,23 @@ func TestString(t *testing.T) {
 	validateLexer(t, input, tests)
 }
 
+func TestArray(t *testing.T) {
+	input := `
+	[1, 2, 3]
+	let x = ["xyz", "abc"]
+	x[0]
+	x[y]`
+
+	tests := []token.Token{
+		token.LBrack(), token.Int("1"), token.Comma(), token.Int("2"), token.Comma(), token.Int("3"), token.RBrack(),
+		token.Let(), token.Ident("x"), token.Assign(), token.LBrack(), token.String("xyz"), token.Comma(), token.String("abc"), token.RBrack(),
+		token.Ident("x"), token.LBrack(), token.Int("0"), token.RBrack(),
+		token.Ident("x"), token.LBrack(), token.Ident("y"), token.RBrack(),
+	}
+
+	validateLexer(t, input, tests)
+}
+
 func TestLexer(t *testing.T) {
 	input := `
 	let five = 5;	
