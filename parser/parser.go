@@ -45,6 +45,7 @@ func New(s string) *Parser {
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunction)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
+	p.registerPrefix(token.LBRACK, p.parseArray)
 
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
@@ -70,28 +71,31 @@ func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
 }
 
 func (p *Parser) parseCallArguments() []ast.Expression {
-	args := []ast.Expression{}
+	return p.parseExpressionList(token.RPAREN)
+}
 
-	if p.peekTokenIs(token.RPAREN) {
+func (p *Parser) parseExpressionList(endToken token.Type) []ast.Expression {
+	list := []ast.Expression{}
+
+	if p.peekTokenIs(endToken) {
 		p.nextToken()
-		return args
+		return list
 	}
 
 	p.nextToken()
-	args = append(args, p.parseExpression(LOWEST))
+	list = append(list, p.parseExpression(LOWEST))
 
 	for p.peekTokenIs(token.COMMA) {
 		p.nextToken()
 		p.nextToken()
-		args = append(args, p.parseExpression(LOWEST))
+		list = append(list, p.parseExpression(LOWEST))
 	}
 
-	if !p.expectPeek(token.RPAREN) {
+	if !p.expectPeek(endToken) {
 		return nil
 	}
 
-	return args
-
+	return list
 }
 
 func (p *Parser) parseFunction() ast.Expression {
@@ -382,6 +386,13 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 	expression.Right = p.parseExpression(PREFIX)
 
 	return expression
+}
+
+func (p *Parser) parseArray() ast.Expression {
+	return &ast.ArrayLiteral{
+		Token:    p.currentToken,
+		Elements: p.parseExpressionList(token.RBRACK),
+	}
 }
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
