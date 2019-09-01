@@ -11,9 +11,11 @@ import (
 
 const PROMPT = ">> "
 
-var debugMode bool = true
+type Options struct {
+	Debug bool
+}
 
-func Start(in io.Reader, out io.Writer) {
+func Start(in io.Reader, out io.Writer, opts Options) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 
@@ -35,7 +37,7 @@ func Start(in io.Reader, out io.Writer) {
 
 		if evaluated := eval.Eval(prgm, env); evaluated != nil {
 
-			if debugMode {
+			if opts.Debug {
 				fmt.Printf("%T (%+v)", evaluated, evaluated)
 			}
 
