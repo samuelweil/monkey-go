@@ -46,7 +46,7 @@ func evalIntegerInfix(op string, l, r object.Object, env *object.Environment) ob
 		return doEval(evaluator, leftVal, rightVal)
 	}
 
-	return Null
+	return newError("unknown operator: %s %s %s", l.Type(), op, r.Type())
 }
 
 func evalStringInfix(op string, l, r object.Object, env *object.Environment) object.Object {
@@ -58,7 +58,7 @@ func evalStringInfix(op string, l, r object.Object, env *object.Environment) obj
 		return doStringEval(evaluator, leftVal, rightVal)
 	}
 
-	return Null
+	return newError("unknown operator: %s %s %s", l.Type(), op, r.Type())
 }
 
 func doStringEval(e stringInfixEvaluator, l, r string) object.Object {
