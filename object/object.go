@@ -16,4 +16,5 @@ const (
 	ERROR        = "ERROR"
 	FUNCTION     = "FUNCTION"
 	STRING       = "STRING"
+	BUILTIN	= "BUILTIN"
 )

@@ -121,12 +121,15 @@ func evalLetStatement(ls *ast.LetStatement, env *object.Environment) object.Obje
 }
 
 func evalIdentifier(ident *ast.Identifier, env *object.Environment) object.Object {
-	val, ok := env.Get(ident.Value)
-	if !ok {
-		return newError("identifier not found: %s", ident.Value)
+	if val, ok := env.Get(ident.Value); ok {
+		return val
 	}
 
-	return val
+	if val, ok := builtins[ident.Value]; ok {
+		return val
+	}
+
+	return newError("identifier not found: %s", ident.Value)
 }
 
 var (
@@ -177,19 +180,24 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
-	function, ok := fn.(*object.Function)
-	if !ok {
+	switch function := fn.(type) {
+
+	case *object.Function:
+		envWithArgs := function.Env.NewChild()
+
+		for paramIdx, param := range function.Parameters {
+			envWithArgs.Set(param.Value, args[paramIdx])
+		}
+
+		evaluated := Eval(function.Body, envWithArgs)
+		return unwrapReturnValue(evaluated)
+
+	case *object.Builtin:
+		return function.Fn(args...)
+
+	default:
 		return newError("not a function: %s", fn.Type())
 	}
-
-	envWithArgs := function.Env.NewChild()
-
-	for paramIdx, param := range function.Parameters {
-		envWithArgs.Set(param.Value, args[paramIdx])
-	}
-
-	evaluated := Eval(function.Body, envWithArgs)
-	return unwrapReturnValue(evaluated)
 }
 
 func unwrapReturnValue(val object.Object) object.Object {
