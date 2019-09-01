@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 	"monkey-go/eval"
-	"monkey-go/parser"
 	"monkey-go/object"
+	"monkey-go/parser"
 )
 
 const PROMPT = ">> "
